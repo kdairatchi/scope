@@ -17,15 +17,25 @@ jobs:
 
       - name: 🔧 Setup Dependencies
         run: |
-          sudo apt update
-          sudo apt install -y unzip jq curl git golang
-          
-          wget https://github.com/projectdiscovery/katana/releases/latest/download/katana_amd64.zip
-          unzip katana_amd64.zip -d /usr/local/bin/
+          # 🔁 Refresh and install core tools
+          sudo apt update -y
+          sudo snap refresh
+          sudo apt install -y zip curl wget git gnupg lsb-release software-properties-common
 
+          # 🧠 Install Go via Snap (cleaner than apt)
+          sudo snap install golang --classic
+
+          # 🧭 Add Google Chrome (for headless browser tools)
+          wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+          echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
+          sudo apt update -y
+          sudo apt install -y google-chrome-stable
+
+          # ✅ Setup Go path and install tools
           echo "export PATH=$PATH:$(go env GOPATH)/bin" >> $GITHUB_ENV
           echo "$HOME/go/bin" >> $GITHUB_PATH
 
+          CGO_ENABLED=1 go install github.com/projectdiscovery/katana/cmd/katana@latest
           go install github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
           go install github.com/tomnomnom/waybackurls@latest
 
@@ -49,4 +59,3 @@ jobs:
 
       - name: ✅ Git Commit & Push
         run: scripts/git_push_changes.sh
-

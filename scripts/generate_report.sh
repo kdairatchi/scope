@@ -1,3 +1,5 @@
+#!/bin/bash
+
 mkdir -p scans
 DATE=$(date +%Y%m%d%H%M%S)
 echo "# 🔍 Scan Summary - $DATE" > scans/scan_summary.md

@@ -58,3 +58,12 @@ jobs:
 
       - name: ✅ Git Commit & Push
         run: scripts/git_push_changes.sh
+        
+      - name: 📁 Ensure Directories Exist
+        run: |
+          mkdir -p recon_output scans logs reports
+          touch scans/history.log
+
+      - name: 📂 Check Required Files
+        run: |
+          ls data/Domains/inscope_domains.txt data/NewData/newdata_inscope_domains.txt || echo "⚠️ Missing scope files!"

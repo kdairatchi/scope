@@ -12,18 +12,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: 🔄 Checkout Code
+        uses: actions/checkout@v4
 
       - name: 🔧 Setup Dependencies
         run: |
           sudo apt update
-          sudo apt install -y subfinder unzip jq curl git
+          sudo apt install -y unzip jq curl git golang
+          
           wget https://github.com/projectdiscovery/katana/releases/latest/download/katana_amd64.zip
           unzip katana_amd64.zip -d /usr/local/bin/
-          go install github.com/tomnomnom/waybackurls@latest
+
+          echo "export PATH=$PATH:$(go env GOPATH)/bin" >> $GITHUB_ENV
           echo "$HOME/go/bin" >> $GITHUB_PATH
 
-      - name: 📁 Make scripts executable
+          go install github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
+          go install github.com/tomnomnom/waybackurls@latest
+
+      - name: 📁 Make Scripts Executable
         run: chmod +x scripts/*.sh
 
       - name: 📊 Run Recon
@@ -43,3 +49,4 @@ jobs:
 
       - name: ✅ Git Commit & Push
         run: scripts/git_push_changes.sh
+

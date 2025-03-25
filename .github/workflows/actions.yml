@@ -7,7 +7,6 @@ on:
     branches:
       - main
 
-# Actions project permission
 permissions:
   contents: write
 
@@ -16,19 +15,36 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Check out repository
-      uses: actions/checkout@v3
+      - name: Check out repository
+        uses: actions/checkout@v3
 
-    - name: Installing tar and unew via binary
-      run: |
-        sudo apt install unzip -y
-        sudo apt install tar
-        wget https://github.com/rix4uni/unew/releases/download/v0.0.5/unew-linux-amd64-0.0.5.tgz
-        tar -xvzf unew-linux-amd64-0.0.5.tgz
-        mv unew /usr/local/bin/unew
-        rm -rf unew-linux-amd64-0.0.5.tgz
+      - name: Installing tar and unew via binary
+        run: |
+          sudo apt install unzip -y
+          sudo apt install tar
+          wget https://github.com/rix4uni/unew/releases/download/v0.0.5/unew-linux-amd64-0.0.5.tgz
+          tar -xvzf unew-linux-amd64-0.0.5.tgz
+          mv unew /usr/local/bin/unew
+          rm -rf unew-linux-amd64-0.0.5.tgz
 
-    - name: Running scope_moniter.sh
-      run: |
-        bash scope_moniter.sh
+      - name: Running scope_moniter.sh
+        run: |
+          bash scope_moniter.sh
+
+      - name: Commit and push changes if there are any
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'actions@users.noreply.github.com'
+          git add .
+
+          if ! git diff --cached --exit-code; then
+            IST_DATE=$(TZ='Asia/Kolkata' date +'%a %b %d %H:%M:%S IST %Y')
+            git commit -m "Updated List: $IST_DATE"
+
+            # Pull before push to avoid conflicts
+            git pull --rebase origin main
+            git push origin main
+          else
+            echo "No changes to commit"
+          fi
 

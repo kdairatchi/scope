@@ -32,17 +32,3 @@ jobs:
       run: |
         bash scope_moniter.sh
 
-    - name: Commit and push changes if there are any
-      run: |
-        git config --global user.name 'GitHub Actions'
-        git config --global user.email 'actions@users.noreply.github.com'
-        git add .
-
-        # Check if there are changes before committing
-        if ! git diff --cached --exit-code; then
-          IST_DATE=$(TZ='Asia/Kolkata' date +'%a %b %d %H:%M:%S IST %Y')
-          git commit -m "Updated List: $IST_DATE"
-          git push
-        else
-          echo "No changes to commit"
-        fi

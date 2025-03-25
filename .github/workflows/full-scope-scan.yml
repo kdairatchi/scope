@@ -19,11 +19,11 @@ jobs:
         run: |
           # 🔁 Refresh and install core tools
           sudo apt update -y
-          sudo snap refresh
+          sudo upgrade -y
           sudo apt install -y zip curl wget git gnupg lsb-release software-properties-common
-
-          # 🧠 Install Go via Snap (cleaner than apt)
-          sudo snap install golang --classic
+          
+          # 🧠 Install Go
+          sudo apt install -y golang
 
           # 🧭 Add Google Chrome (for headless browser tools)
           wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -

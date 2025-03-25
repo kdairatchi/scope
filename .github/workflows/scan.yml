@@ -1,0 +1,71 @@
+name: Full Scope Scan with ZAP and Nuclei
+
+on:
+  push:
+    paths:
+      - 'inscope_domains.txt'
+      - 'inscope_wildcards.txt'
+      - 'newdata_inscope_domains.txt'
+      - 'newdata_inscope_wildcards.txt'
+
+jobs:
+  full-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🔄 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 📡 Install Recon Tools
+        run: |
+          sudo apt update
+          sudo apt install -y subfinder unzip
+          wget https://github.com/projectdiscovery/katana/releases/latest/download/katana_amd64.zip
+          unzip katana_amd64.zip -d /usr/local/bin/
+          go install github.com/tomnomnom/waybackurls@latest
+          echo "$HOME/go/bin" >> $GITHUB_PATH
+
+      - name: 📊 Recon with Subfinder, Katana, Waybackurls
+        run: |
+          mkdir -p recon_output
+          cat inscope_domains.txt newdata_inscope_domains.txt | sort -u > all_targets.txt
+          subfinder -dL all_targets.txt -silent | tee recon_output/subs.txt
+          katana -list recon_output/subs.txt -d 2 -silent | tee recon_output/katana.txt
+          waybackurls < recon_output/subs.txt | tee recon_output/wayback.txt
+          cat recon_output/katana.txt recon_output/wayback.txt | sort -u > recon_output/all_urls.txt
+
+      - name: ⚔️ ZAP Full Scan
+        uses: zaproxy/action-full-scan@v0.12.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          target: 'https://example.com'  # Replace dynamically if needed
+          cmd_options: '-a'
+          fail_action: false
+          allow_issue_writing: false
+          artifact_name: zap_scan
+
+      - name: ⚡ Nuclei Vulnerability Scan
+        uses: projectdiscovery/nuclei-action@main
+        with:
+          urls: recon_output/all_urls.txt
+          flags: "-severity critical,high,medium -stats -json"
+
+      - name: 📬 Upload Nuclei Logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuclei.log
+          path: nuclei.log
+
+      - name: 📢 Send Discord Webhook (optional)
+        if: always()
+        run: |
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d '{"content": "✅ Full scope scan completed: ZAP & Nuclei."}' \
+               ${{ secrets.DISCORD_WEBHOOK }}
+
+      - name: 🗂️ Upload ZAP Report Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: zap-scan-report
+          path: zap_scan

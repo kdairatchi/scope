@@ -19,12 +19,12 @@ jobs:
         run: |
           # 🔁 Refresh and install core tools
           sudo apt update -y
-          sudo apt install -y zip curl wget git gnupg lsb-release software-properties-common
+          sudo apt install -y zip curl wget git gnupg lsb-release software-properties-common jq python3-pip
           
           # 🧠 Install Go
           sudo apt install -y golang
 
-          # 🧭 Add Google Chrome (for headless browser tools)
+          # 🔭 Add Google Chrome (for headless browser tools)
           wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
           echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
           sudo apt update -y
@@ -34,31 +34,14 @@ jobs:
           echo "export PATH=$PATH:$(go env GOPATH)/bin" >> $GITHUB_ENV
           echo "$HOME/go/bin" >> $GITHUB_PATH
 
-          CGO_ENABLED=1 go install github.com/projectdiscovery/katana/cmd/katana@latest
+          go install github.com/projectdiscovery/katana/cmd/katana@latest
           go install github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
           go install github.com/tomnomnom/waybackurls@latest
+          go install github.com/projectdiscovery/httpx/cmd/httpx@latest
+          go install github.com/hahwul/dalfox/v2@latest
 
-      - name: 📁 Make Scripts Executable
-        run: chmod +x scripts/*.sh
+          pip install wafw00f
 
-      - name: 📊 Run Recon
-        run: scripts/recon.sh
-
-      - name: ⚔️ Run ZAP Full Scan
-        run: scripts/zap_scan.sh
-
-      - name: ⚡ Run Nuclei Scan
-        run: scripts/nuclei_scan.sh
-
-      - name: 🧾 Generate Markdown Report
-        run: scripts/generate_report.sh
-
-      - name: 📢 Send Discord Notification
-        run: scripts/upload_discord.sh
-
-      - name: ✅ Git Commit & Push
-        run: scripts/git_push_changes.sh
-        
       - name: 📁 Ensure Directories Exist
         run: |
           mkdir -p recon_output scans logs reports
@@ -67,3 +50,67 @@ jobs:
       - name: 📂 Check Required Files
         run: |
           ls data/Domains/inscope_domains.txt data/NewData/newdata_inscope_domains.txt || echo "⚠️ Missing scope files!"
+
+      - name: 📊 Run Recon
+        run: scripts/recon.sh
+
+      - name: 🛠️ Amass Passive Recon
+        run: |
+          amass enum -passive -df data/Domains/inscope_domains.txt -o recon_output/amass.txt || true
+
+      - name: 🔎 Probing with httpx
+        run: |
+          cat recon_output/subs.txt | httpx -silent -status-code -title -tech-detect -ip -json > recon_output/httpx.json || true
+          cat recon_output/httpx.json | jq -r '.url' >> recon_output/all_urls.txt
+          sort -u recon_output/all_urls.txt -o recon_output/all_urls.txt
+
+      - name: 💥 Fuzz with ffuf
+        run: |
+          mkdir -p recon_output/ffuf
+          while read url; do
+            ffuf -u "$url/FUZZ" -w wordlists/common.txt -o "recon_output/ffuf/$(echo $url | md5sum | cut -d' ' -f1).json" -of json || true
+          done < recon_output/all_urls.txt
+
+      - name: 🚨 Scan for XSS with Dalfox
+        run: |
+          mkdir -p recon_output/dalfox
+          dalfox file recon_output/all_urls.txt --output recon_output/dalfox/dalfox.txt || true
+
+      - name: 🧜️ XSStrike XSS Testing
+        run: |
+          mkdir -p recon_output/xsstrike
+          git clone https://github.com/s0md3v/XSStrike.git xsstrike
+          cd xsstrike && pip install -r requirements.txt && cd ..
+          while read url; do
+            python3 xsstrike/xsstrike.py -u "$url" --crawl --blind || true
+          done < recon_output/all_urls.txt
+
+      - name: 🛡️ WAF Detection (wafw00f)
+        run: |
+          mkdir -p recon_output/waf
+          while read url; do
+            wafw00f "$url" >> recon_output/waf/results.txt || true
+          done < recon_output/all_urls.txt
+
+      - name: 🏋️ Run ZAP Full Scan
+        run: scripts/zap_scan.sh
+
+      - name: ⚡️ Run Nuclei Scan
+        run: scripts/nuclei_scan.sh
+
+      - name: 📎 Generate Markdown Report
+        run: scripts/generate_report.sh
+
+      - name: 📢 Send Discord Notification
+        run: scripts/upload_discord.sh
+
+      - name: ✅ Git Commit & Push
+        run: scripts/git_push_changes.sh
+
+      - name: 🗃️ Archive HTML Reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: html-scan-reports
+          path: |
+            zap_reports/
+            recon_output/**/*.html

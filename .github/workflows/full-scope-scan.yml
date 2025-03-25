@@ -19,7 +19,6 @@ jobs:
         run: |
           # 🔁 Refresh and install core tools
           sudo apt update -y
-          sudo upgrade -y
           sudo apt install -y zip curl wget git gnupg lsb-release software-properties-common
           
           # 🧠 Install Go

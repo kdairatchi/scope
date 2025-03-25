@@ -64,6 +64,11 @@ jobs:
           cat recon_output/httpx.json | jq -r '.url' >> recon_output/all_urls.txt
           sort -u recon_output/all_urls.txt -o recon_output/all_urls.txt
 
+      - name: 📥 Fetch Fuzzing Wordlist
+        run: |
+          mkdir -p wordlists
+          curl -s https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/common.txt -o wordlists/common.txt
+
       - name: 💥 Fuzz with ffuf
         run: |
           mkdir -p recon_output/ffuf

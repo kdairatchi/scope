@@ -1,6 +1,5 @@
-api.dropboxapi.com
-dash.ai
-dropboxpartners.com
-reclaim.ai
-dropbox.com
-app.reclaim.ai
+cloudinary.com
+api.cloudinary.com
+res.cloudinary.com
+mediaflows.cloudinary.com
+dimensions.cloudinary.com

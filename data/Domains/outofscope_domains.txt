@@ -486,10 +486,6 @@ ir.tripadvisor.com
 spotlight-dev.tripadvisor.com
 spotlight.tripadvisor
 careers.tripadvisor.com
-tgt.tamedia.ch
-auth.20min.ch
-cre-api.tamedia.ch
-track.20min.ch
 lab.authy.com
 zipwhip.com
 twil.io
@@ -2641,9 +2637,6 @@ cmsdev.dana.id
 techops.dana.id
 dm.dana.id
 encrypt.dana.id
-decathlon.com
-login.decathlon.net
-account.decathlon.com
 doc.demarches-simplifiees.fr
 beta.gouv.fr
 demarches-simplifiees.fr

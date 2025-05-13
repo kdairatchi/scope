@@ -1372,6 +1372,7 @@ nw.ring.com
 oauth.ring.com
 ring.com
 prd-ring-web-us.prd.rings.solutions
+publicsafety.ring.com
 web3.sdx.com
 sdx.com
 bolsasymercados.es

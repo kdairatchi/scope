@@ -1870,6 +1870,8 @@ partnerxchange.8x8.com
 support-portal.8x8.com
 admin.8x8.com
 cloud8.8x8.com
+campaign.wavecell.com
+contacts.8x8.com
 8x8.vc
 webrtc.8x8.com
 org.vom8x8.sipua

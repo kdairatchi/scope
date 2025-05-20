@@ -1,5 +1,2 @@
-dashboard.sendbird.com
-gate.sendbird.com
-sendbird.com
-calls.sendbird.com
-notifications.sendbird.com
+business.comcast.com
+xfinity.com

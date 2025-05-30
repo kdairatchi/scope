@@ -189,7 +189,6 @@ np.*.lfscnp.com
 *.pods.link
 *.playlist.link
 *.mylink.page
-*.lululemon.com
 *.cloud.mattermost.com
 *.mgm.mo
 *.booking.mgm.mo

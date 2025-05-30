@@ -1070,8 +1070,6 @@ gateway.skyscanner.net
 skyscanner.net
 partnerportal.skyscanner.net
 *.skyscanner.net
-smartmockups.com
-*.smartmockups.com
 snapnames.com
 namejet.com
 sophos.com

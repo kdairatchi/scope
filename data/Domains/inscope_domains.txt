@@ -806,7 +806,6 @@ skroutz.gr
 gateway.skyscanner.net
 skyscanner.net
 partnerportal.skyscanner.net
-smartmockups.com
 snapnames.com
 namejet.com
 sophos.com

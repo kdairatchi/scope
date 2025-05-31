@@ -13,5 +13,3 @@ gwapi1.tripadvisor.com
 gwapi2.tripadvisor.com
 rentals.tripadvisor.com
 marlo.ext.tripadvisor.com
-api.woox.io
-woox.io

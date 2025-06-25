@@ -1,1 +1,2 @@
-*.polymoon.it
+*.ninjakiwi.me
+*.nkstatic.com

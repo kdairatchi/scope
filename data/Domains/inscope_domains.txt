@@ -1059,14 +1059,12 @@ hd.opposhop.cn
 ifind.heytapmobi.com
 ifind.oppomobile.com
 mtp.myoas.com
-nativepay.keke.cn
 open.oppomobile.com
 sbox.myoas.com
 spgw-pay.finzfin.com
 support.oppo.com
 oppo.com
 opposhop.cn
-nearme.com.cn
 bugbounty-ctf.1password.com
 1password.com
 events.1password.com

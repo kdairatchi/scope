@@ -281,6 +281,7 @@ openapi-v2.exoscale.com
 zammad.internal.exoscale.ch
 exoscalestatus.com
 gslink.financialforce.com
+apuat-aaa.fisglobal.com
 *.db.fivetran.com
 testing-datalake.fivetran.com
 shop.fivetran.com

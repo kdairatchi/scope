@@ -365,9 +365,6 @@ website.theforkmanager.com
 *.lafourchette.rest
 login.theforkmanager.com
 developer.thefork.io
-identity.lastpass.com
-info.lastpass.com
-forums.lastpass.com
 investors.latitudefinancial.com.au
 auth.latitudefinancial.com
 auth.*.latitudefinancial.com

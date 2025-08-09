@@ -1,6 +1,5 @@
-lastpass.com
-support.lastpass.com
-blog.lastpass.com
-admin.lastpass.com
-auth.lastpass.com
-accounts.lastpass.com
+api.openai.com
+chat.openai.com
+openai.org
+openai.com
+platform.openai.com

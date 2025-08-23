@@ -8,15 +8,20 @@ mkdir -p recon_output scans
 cat data/Domains/inscope_domains.txt data/NewData/newdata_inscope_domains.txt | sort -u > all_targets.txt
 
 # Run recon tools
-subfinder -dL all_targets.txt -silent | tee recon_output/subs.txt
-katana -list recon_output/subs.txt -d 2 -silent | tee recon_output/katana.txt
-waybackurls < recon_output/subs.txt | tee recon_output/wayback.txt
+subfinder -dL all_targets.txt -silent | tee recon_output/subs.txt | notify -p discord -c notify.conf
+katana -list recon_output/subs.txt -d 2 -silent | tee recon_output/katana.txt 
+waybackurls < recon_output/subs.txt | tee recon_output/wayback.txt 
 
 # Merge URLs
-cat recon_output/katana.txt recon_output/wayback.txt | grep -E '^https?://' | sort -u > recon_output/all_urls.txt
+cat recon_output/katana.txt recon_output/wayback.txt | grep -E '^https?://' | sort -u > recon_output/all_urls.txt 
+
+# Probe with httpx
+cat recon_output/subs.txt | httpx -silent -status-code -title -tech-detect -ip -json > recon_output/httpx.json
+cat recon_output/httpx.json | jq -r '.url' >> recon_output/all_urls.txt | notify -p discord -c notify.conf
+sort -u recon_output/all_urls.txt -o recon_output/all_urls.txt 
 
 # Log output to history
 DATE=$(date +%Y%m%d%H%M%S)
 echo -e "\n[RECON $DATE]" >> scans/history.log
-cat recon_output/all_urls.txt >> scans/history.log
+cat recon_output/all_urls.txt >> scans/history.log 
 

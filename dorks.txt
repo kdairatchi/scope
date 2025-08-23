@@ -1,0 +1,5 @@
+site:*.{{domain}} intitle:"index of"
+site:*.{{domain}} ext:log
+site:*.{{domain}} inurl:login
+site:*.{{domain}} "Dashboard"
+site:*.{{domain}} "admin"

@@ -36,6 +36,6 @@ while read -r url; do
 done < "$URL_LIST"
 
 # Log summary
-ls -lh dastardly_reports | tee scans/dastardly_summary.log
+ls -lh dastardly_reports | tee scans/dastardly_summary.log | notify -p discord -c notify.conf
 
 echo "✅ All Dastardly scans completed. Reports saved in dastardly_reports/"

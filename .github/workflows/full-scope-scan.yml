@@ -45,8 +45,16 @@ jobs:
           go install github.com/tomnomnom/waybackurls@latest
           go install github.com/projectdiscovery/httpx/cmd/httpx@latest
           go install github.com/hahwul/dalfox/v2@latest
+          go install github.com/projectdiscovery/notify/cmd/notify@latest
+          go install github.com/kdairatchi/sqry@latest
 
           pip install wafw00f
+          
+          git clone https://github.com/kdairatchi/loxs.git
+          cd loxs
+          pip3 install -r requirements.txt
+          sudo bash setup.sh
+          cd ..
 
       - name: 📁 Ensure Directories Exist
         run: |
@@ -60,15 +68,38 @@ jobs:
       - name: 📊 Run Recon
         run: scripts/recon.sh
 
+      - name: 🕵️ Dork Scanning with sqry
+        run: |
+          mkdir -p recon_output/sqry
+          for domain in $(cat data/Domains/inscope_domains.txt); do
+            while read dork; do
+              dork=$(echo "$dork" | sed "s/{{domain}}/$domain/g")
+              echo "Running sqry for: $dork"
+              sqry -q "$dork" -o recon_output/sqry/$domain_dorks.txt
+            done < dorks.txt
+          done
+
+      - name: 📢 Notify sqry results
+        run: |
+          cat recon_output/sqry/* | notify -p discord -c notify.conf
+
       - name: 🛠️ Amass Passive Recon
         run: |
           amass enum -passive -df data/Domains/inscope_domains.txt -o recon_output/amass.txt || true
-
-      - name: 🔎 Probing with httpx
+      
+      - name: 📢 Notify amass results
         run: |
-          cat recon_output/subs.txt | httpx -silent -status-code -title -tech-detect -ip -json > recon_output/httpx.json || true
-          cat recon_output/httpx.json | jq -r '.url' >> recon_output/all_urls.txt
-          sort -u recon_output/all_urls.txt -o recon_output/all_urls.txt
+          cat recon_output/amass.txt | notify -p discord -c notify.conf
+
+      - name: 🕵️ Run loxs on discovered IPs
+        run: |
+          mkdir -p recon_output/loxs
+          cat recon_output/httpx.json | jq -r '.ip' | sort -u > recon_output/ips.txt
+          loxs -f recon_output/ips.txt --json > recon_output/loxs/loxs_results.json
+
+      - name: 📢 Notify loxs results
+        run: |
+          cat recon_output/loxs/loxs_results.json | notify -p discord -c notify.conf
 
       - name: 📥 Fetch Fuzzing Wordlist
         run: |
@@ -86,6 +117,10 @@ jobs:
         run: |
           mkdir -p recon_output/dalfox
           dalfox file recon_output/all_urls.txt --output recon_output/dalfox/dalfox.txt || true
+
+      - name: 📢 Notify dalfox results
+        run: |
+          cat recon_output/dalfox/dalfox.txt | notify -p discord -c notify.conf
 
       - name: 🧜️ XSStrike XSS Testing
         run: |
@@ -111,9 +146,6 @@ jobs:
 
       - name: 📎 Generate Markdown Report
         run: scripts/generate_report.sh
-
-      - name: 📢 Send Discord Notification
-        run: scripts/upload_discord.sh
 
       - name: ✅ Git Commit & Push
         run: scripts/git_push_changes.sh

@@ -1679,6 +1679,8 @@ flip0717.earlywarning.com
 api.zellepay.com
 api.zmsp.earlywarning.com
 earlywarningapi.force.com
+platform.cat.earlywarning.io
+platformtest.cat.earlywarning.io
 toolkit.zellepay.com
 zellepay.earlywarning.com
 brand.instacart.com
@@ -2595,6 +2597,7 @@ affiliates.robinhood.com
 share.robinhood.com
 roadshow.robinhood.com
 saytechnologies.com
+simscale.com
 careers.sqills.com
 limonsoda.cl
 trouw.nl

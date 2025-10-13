@@ -3616,6 +3616,7 @@ mta-sts.wearehackerone.com
 profile-photos-us-east-2.hackerone-user-content.com
 profile-photos.hackerone-user-content.com
 reviewer.pullrequest.com
+app.aikido.dev
 myaccount.ad.nl
 webwinkel.ad.nl
 ad.nl
@@ -4337,7 +4338,6 @@ admin3.pentest.clicsante.ca
 poc-op-ywh.it.authentification.si.gouv.qc.ca
 auth-ywh.it.authentification.si.gouv.qc.ca
 cyber.gouv.qc.ca
-pab.donneesquebec.ca
 gap.citizenportal-test.bugbounty.akinox.dev
 test.m4sv.bugbounty.akinox.dev
 pbgq.upac.gouv.qc.ca
